@@ -1,0 +1,53 @@
+version: '2'
+services:
+
+  rabbitmq:
+    image: rabbitmq:3.5.7-management
+    ports:
+      - 15671:15672
+      - 4369:4369
+      - 5671:5671
+      - 5672:5672
+      - 25672:25672
+  db:
+    image: postgres:9.5
+    environment:
+      - POSTGRES_DB=guest
+      - POSTGRES_PASSWORD=guest
+
+  web:
+    build: .
+    depends_on:
+        - rabbitmq
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - '8080:80'
+    links:
+      - rabbitmq
+      - db
+    environment:
+      - 'DATABASE_URL=postgres://postgres:guest@db:5432/guest'
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - ENVIRONMENT=development
+      - AFRICAS_TALKING_API_KEY=313a53fa92f768aed158d6fefe2f6bd5549a53109182fa806b4729e561c1f017
+      - AFRICAS_TALKING_USERNAME=EliasKioni
+
+  worker:
+    build: .
+    command: /bin/sh ./worker.sh
+    depends_on:
+        - rabbitmq
+        - db
+    volumes_from:
+      - web
+    links:
+      - rabbitmq
+      - db
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - 'DATABASE_URL=postgres://postgres:guest@db:5432/guest'
+      - ENVIRONMENT=development
+      - AFRICAS_TALKING_API_KEY=313a53fa92f768aed158d6fefe2f6bd5549a53109182fa806b4729e561c1f017
+      - AFRICAS_TALKING_USERNAME=EliasKioni
+      - DJANGO_SETTINGS_MODULE=BadStatusLine.settings
