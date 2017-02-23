@@ -1,6 +1,7 @@
 # <h1 style="color:#42f448">BadStatusLine</h1>
 ## Possible bug
 >### I thought of creating this project to try to show case a small issue that caused our system to misbehave.
+>### Our system heavily relies on Africa's Talking. Any mistake means we are not in business 
 
 ## Disclaimer 
 > ### I still consider myself an amateur developer. Kindly forgive my lack of knowledge if what am reporting is wrong, not accurate or irrelevant.
