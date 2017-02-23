@@ -41,7 +41,7 @@
 
 > ### To understand why i think it might affect other people who fail to realise it early. In the lib.AfricasTalkingGateway.py file. Uncomment the send_message function and comment the *send_message* function which we have handled the exception.
 
-> ## You will notice if the BadStatusLine is raised. That thread will fail causing messages not be sent which is something to worry about.
+> ## You will notice if the BadStatusLine is raised. The active thread will fail causing messages not to be sent which is something to worry about.
 
 > ## I think we missed to catch it because your doc's in some place mentions that all gateway exceptions will be handled. Which I think is not true.
 
