@@ -37,7 +37,7 @@
 > ## In the terminal listening on worker logs check the logs. The exception is been raised randomly. So be patient and wait for it to be raised.
 > ## You will see the exception am talking about.
 
-> ## Partly we failed to catch this because it does not show up while sending single SMSes. But sending bulk at once is showed up.
+> ### Partly we failed to catch this because it does not show up while sending single SMSes. But sending bulk at once it showed up.
 
 > ### To understand why i think it might affect other people who fail to realise it early. In the lib.AfricasTalkingGateway.py file. Uncomment the send_message function and comment the *send_message* function which we have handled the exception.
 
