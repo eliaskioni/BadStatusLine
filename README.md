@@ -1,9 +1,9 @@
 # <h1 style="color:#42f448">BadStatusLine</h1>
 ## Possible bug
->### I thought of creating this project to try to show case a small issue that caused our system to misbehave
+>### I thought of creating this project to try to show case a small issue that caused our system to misbehave.
 
 ## Disclaimer 
-> ### I still consider myself an amateur developer. Kindly forgive my lack of knowledge if what am reporting is wrong.
+> ### I still consider myself an amateur developer. Kindly forgive my lack of knowledge if what am reporting is wrong, not accurate or irrelevant.
 
 ## To reproduce what am saying. 
 > ### Clone this repo [BADSTATUSLINE](https://github.com/eliaskioni/BadStatusLine.git) and cd to it's directory. 
@@ -37,11 +37,13 @@
 > ## In the terminal listening on worker logs check the logs. The exception is been raised randomly. So be patient and wait for it to be raised.
 > ## You will see the exception am talking about.
 
-> ### To understand why i think it will affect other people. In the lib.AfricasTalkingGateway.py file. Uncomment the send_message function and comment the *send_message* function which we have handled the exception.
+> ## Partly we failed to catch this because it does not show up while sending single SMSes. But sending bulk at once is showed up.
 
-> ## You will notice if the BadStatusLine is raised. That thread will fail causing messages not be sent which something to worry about.
+> ### To understand why i think it might affect other people who fail to realise it early. In the lib.AfricasTalkingGateway.py file. Uncomment the send_message function and comment the *send_message* function which we have handled the exception.
 
-> ## i think we missed to catch it because your doc's in some place mentions that all gateway exceptions will be handled. Which I think is not true.
+> ## You will notice if the BadStatusLine is raised. That thread will fail causing messages not be sent which is something to worry about.
+
+> ## I think we missed to catch it because your doc's in some place mentions that all gateway exceptions will be handled. Which I think is not true.
 
 
 > # Here are some links for people who bumped into the same issue. 
