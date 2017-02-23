@@ -4,43 +4,15 @@ import phonenumbers
 from structlog import get_logger
 from celery_declarations.celery import app
 from .models import *
-from phonenumber_field.phonenumber import to_python
 
 
-def validate_recipient(phone_number, amount):
-    logger = get_logger(__name__).bind(
-        action="validating phone number",
-    )
-    logger.info(phone_number)
-    try:
-        match = to_python(phone_number).is_valid()
-
-        if match:
-            phone_number = phone_number
-            # currently supporting only kenyan phone numbers for sending airtime
-            kenyan_number_check = phonenumbers.parse(phone_number)
-
-            if not str(kenyan_number_check.country_code) == '254':
-                return False, {"phone_number": "Sending airtime is currently only supported in Kenya"}
-            amount = float(amount)
-
-            if amount <= 9 or amount > 10000:
-                return False, {"amount": "amount should be greater than 9 and less than 10000"}
-        else:
-            return False, {"phone_number": "phone number should start with 0 or +254, and more than 9 digits"}
-
-    except ValueError:
-        return False, {'amount': "amount should be a digits"}
-    return True, True
-
-
-def create_send_sms_task(sms_sender, sms_details, message_cost, sender_id=None):
+def create_send_sms_task(sms_sender, sms_details, sender_id=None):
     """
     This method does the following:
         - it gets the sms details
         - validates the phone_numbers
-        - creates a send sms object and saves
-        - it creates a ampq message for executing send_sms method
+        - Persist Text Message
+        - Create celery task for async interactions with Africa's Talking
 
     :param user:
     :param sms_details:
@@ -72,7 +44,6 @@ def create_send_sms_task(sms_sender, sms_details, message_cost, sender_id=None):
             logger.warning("invalid_data", error=error)
             return valid, [error]
 
-    # Create a send sms object
     sms_dict = {}
     list_of_transaction_to_create = []
     recipient_split = {}
@@ -80,8 +51,6 @@ def create_send_sms_task(sms_sender, sms_details, message_cost, sender_id=None):
     list_of_transactions_created = []
 
     for index, recipient_data in enumerate(sms_details.values()[0]):
-
-        # Create a Text Message object
         phone_number = recipient_data[0]
         if phone_number.startswith('254'):
             phone_number = phone_number.replace('254', '+254', 1)
@@ -112,7 +81,6 @@ def create_send_sms_task(sms_sender, sms_details, message_cost, sender_id=None):
         sms_transaction = SmsTransaction.objects.create()
         list_of_transactions_created.append(sms_transaction.id)
 
-        # create an sms recipient object or each number
     sms_dict.update(dict(
         sent_from=str(sms_sender.username),
         message=message,
@@ -140,10 +108,6 @@ def create_send_sms_task(sms_sender, sms_details, message_cost, sender_id=None):
 
 
 def validate_number(recipients):
-    logger = get_logger(__name__).bind(
-        action="Validation check",
-    )
-
     for recipient in recipients:
         if not isinstance(recipient, tuple) and not isinstance(recipient, list):
             return {"to": " recipient should be a tuple or a list"}
@@ -151,7 +115,6 @@ def validate_number(recipients):
             return {"to": " recipient should have phone_number and name only"}
 
         phone_number = str(recipient[0]).strip()
-        name = recipient[1]
         try:
             match = re.match(r'^(0)(?P<number>\d{9})$', phone_number)
 

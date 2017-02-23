@@ -1,7 +1,5 @@
 from django.contrib.auth.models import User
-from django.http.response import HttpResponse
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 from structlog import get_logger
 
@@ -61,7 +59,7 @@ class TextMessageModelApi(ModelViewSet):
 
             user = User.objects.get(username="guest")
             sms_status, result = create_send_sms_task(sms_sender=user, sms_details=data,
-                                                      sender_id=sender_id, message_cost=1)
+                                                      sender_id=sender_id)
             if sms_status:
                 response_.status_code = status.HTTP_200_OK
                 return response_
