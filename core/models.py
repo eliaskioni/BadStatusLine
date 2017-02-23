@@ -19,7 +19,7 @@ class SmsTransaction(models.Model):
     response = JSONField(blank=True, null=True)
 
     def __unicode__(self):
-        return "{0} - {1}".format(self.account, self.response)
+        return "{0}".format(self.response)
 
     class Meta:
         verbose_name = "SMS Transaction"
